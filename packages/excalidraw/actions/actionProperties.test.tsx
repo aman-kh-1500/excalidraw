@@ -140,7 +140,19 @@ describe("element locking", () => {
       API.setElements([rect1, rect2]);
       API.setSelectedElements([rect1, rect2]);
 
+      expect(queryByTestId(document.body, `strokeWidth-thinnest`)).not.toBe(
+        null,
+      );
+      expect(queryByTestId(document.body, `strokeWidth-extraThin`)).not.toBe(
+        null,
+      );
       expect(queryByTestId(document.body, `strokeWidth-thin`)).not.toBe(null);
+      expect(
+        queryByTestId(document.body, `strokeWidth-thinnest`),
+      ).not.toBeChecked();
+      expect(
+        queryByTestId(document.body, `strokeWidth-extraThin`),
+      ).not.toBeChecked();
       expect(
         queryByTestId(document.body, `strokeWidth-thin`),
       ).not.toBeChecked();
