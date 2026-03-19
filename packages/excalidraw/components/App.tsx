@@ -6587,8 +6587,8 @@ class App extends React.Component<AppProps, AppState> {
           // 2x multiplier is just a magic number that makes this work correctly
           // on touchscreen devices (note: if we get report that panning is slower/faster
           // than actual movement, consider swapping with devicePixelRatio)
-          scrollX: zoomState.scrollX + 2 * (deltaX / nextZoom),
-          scrollY: zoomState.scrollY + 2 * (deltaY / nextZoom),
+          scrollX: zoomState.scrollX + 4 * (deltaX / nextZoom),
+          scrollY: zoomState.scrollY + 4 * (deltaY / nextZoom),
           shouldCacheIgnoreZoom: true,
         });
 
@@ -7936,9 +7936,11 @@ class App extends React.Component<AppProps, AppState> {
         window.addEventListener(EVENT.POINTER_UP, enableNextPaste);
       }
 
+      // Apply faster scrolling for touch devices
+      const touchMultiplier = this.editorInterface.isTouchScreen ? 2 : 1;
       this.translateCanvas({
-        scrollX: this.state.scrollX - deltaX / this.state.zoom.value,
-        scrollY: this.state.scrollY - deltaY / this.state.zoom.value,
+        scrollX: this.state.scrollX - (deltaX * touchMultiplier) / this.state.zoom.value,
+        scrollY: this.state.scrollY - (deltaY * touchMultiplier) / this.state.zoom.value,
       });
     });
     const teardown = withBatchedUpdates(
