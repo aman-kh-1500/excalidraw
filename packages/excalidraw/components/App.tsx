@@ -6806,10 +6806,11 @@ class App extends React.Component<AppProps, AppState> {
         console.log('[EXCALIDRAW PINCH] pinchMultiplier:', pinchMultiplier);
         this.translateCanvas({
           zoom: zoomState.zoom,
-          // Configurable multiplier for smooth, responsive scrolling on touchscreen devices
-          // Optimized for iPad/mobile to match PDF viewer responsiveness
-          scrollX: zoomState.scrollX + pinchMultiplier * (deltaX / nextZoom),
-          scrollY: zoomState.scrollY + pinchMultiplier * (deltaY / nextZoom),
+          // 2x multiplier is just a magic number that makes this work correctly
+          // on touchscreen devices (note: if we get report that panning is slower/faster
+          // than actual movement, consider swapping with devicePixelRatio)
+          scrollX: zoomState.scrollX + 4 * (deltaX / nextZoom),
+          scrollY: zoomState.scrollY + 4 * (deltaY / nextZoom),
           shouldCacheIgnoreZoom: true,
         });
 
@@ -8187,14 +8188,8 @@ class App extends React.Component<AppProps, AppState> {
         window.addEventListener(EVENT.POINTER_UP, enableNextPaste);
       }
 
-      // Apply significantly faster scrolling for touch devices (configurable multiplier for hand tool)
-      // This provides smooth, responsive panning similar to PDF viewers
-      const handToolMultiplier = this.props.touchScrollSpeed?.handToolMultiplier ?? 3;
-      console.log('[EXCALIDRAW HAND TOOL] touchScrollSpeed prop:', this.props.touchScrollSpeed);
-      console.log('[EXCALIDRAW HAND TOOL] handToolMultiplier:', handToolMultiplier);
-      console.log('[EXCALIDRAW HAND TOOL] isTouchScreen:', this.editorInterface.isTouchScreen);
-      const touchMultiplier = this.editorInterface.isTouchScreen ? handToolMultiplier : 1;
-      console.log('[EXCALIDRAW HAND TOOL] final touchMultiplier:', touchMultiplier);
+      // Apply faster scrolling for touch devices
+      const touchMultiplier = this.editorInterface.isTouchScreen ? 2 : 1;
       this.translateCanvas({
         scrollX: this.state.scrollX - (deltaX * touchMultiplier) / this.state.zoom.value,
         scrollY: this.state.scrollY - (deltaY * touchMultiplier) / this.state.zoom.value,
