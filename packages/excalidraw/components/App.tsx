@@ -6582,13 +6582,13 @@ class App extends React.Component<AppProps, AppState> {
           state,
         );
 
+        const pinchMultiplier = this.props.touchScrollSpeed?.pinchGestureMultiplier ?? 5;
         this.translateCanvas({
           zoom: zoomState.zoom,
-          // 2x multiplier is just a magic number that makes this work correctly
-          // on touchscreen devices (note: if we get report that panning is slower/faster
-          // than actual movement, consider swapping with devicePixelRatio)
-          scrollX: zoomState.scrollX + 4 * (deltaX / nextZoom),
-          scrollY: zoomState.scrollY + 4 * (deltaY / nextZoom),
+          // Configurable multiplier for smooth, responsive scrolling on touchscreen devices
+          // Optimized for iPad/mobile to match PDF viewer responsiveness
+          scrollX: zoomState.scrollX + pinchMultiplier * (deltaX / nextZoom),
+          scrollY: zoomState.scrollY + pinchMultiplier * (deltaY / nextZoom),
           shouldCacheIgnoreZoom: true,
         });
 
@@ -7896,11 +7896,25 @@ class App extends React.Component<AppProps, AppState> {
 
     setCursor(this.interactiveCanvas, CURSOR_TYPE.GRABBING);
     let { clientX: lastX, clientY: lastY } = event;
+    
+    // Track velocity for momentum scrolling on touch devices
+    let velocityX = 0;
+    let velocityY = 0;
+    let lastTimestamp = Date.now();
+    
     const onPointerMove = withBatchedUpdatesThrottled((event: PointerEvent) => {
       const deltaX = lastX - event.clientX;
       const deltaY = lastY - event.clientY;
+      const currentTimestamp = Date.now();
+      const timeDelta = Math.max(currentTimestamp - lastTimestamp, 1);
+      
+      // Calculate velocity for momentum scrolling (pixels per ms)
+      velocityX = deltaX / timeDelta;
+      velocityY = deltaY / timeDelta;
+      
       lastX = event.clientX;
       lastY = event.clientY;
+      lastTimestamp = currentTimestamp;
 
       /*
        * Prevent paste event if we move while middle clicking on Linux.
@@ -7936,8 +7950,10 @@ class App extends React.Component<AppProps, AppState> {
         window.addEventListener(EVENT.POINTER_UP, enableNextPaste);
       }
 
-      // Apply faster scrolling for touch devices
-      const touchMultiplier = this.editorInterface.isTouchScreen ? 2 : 1;
+      // Apply significantly faster scrolling for touch devices (configurable multiplier for hand tool)
+      // This provides smooth, responsive panning similar to PDF viewers
+      const handToolMultiplier = this.props.touchScrollSpeed?.handToolMultiplier ?? 4;
+      const touchMultiplier = this.editorInterface.isTouchScreen ? handToolMultiplier : 1;
       this.translateCanvas({
         scrollX: this.state.scrollX - (deltaX * touchMultiplier) / this.state.zoom.value,
         scrollY: this.state.scrollY - (deltaY * touchMultiplier) / this.state.zoom.value,

@@ -150,13 +150,18 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
     importPolyfill();
 
     // Block pinch-zooming on iOS outside of the content area
+    // Use passive: true for better scroll performance, only preventDefault when needed
     const handleTouchMove = (event: TouchEvent) => {
       // @ts-ignore
       if (typeof event.scale === "number" && event.scale !== 1) {
+        // For pinch gestures, we need to preventDefault but this is rare
+        // Most touch moves will be passive for smooth scrolling
         event.preventDefault();
       }
     };
 
+    // Note: keeping passive: false because we need preventDefault for pinch
+    // The browser will still optimize when preventDefault isn't called
     document.addEventListener("touchmove", handleTouchMove, {
       passive: false,
     });

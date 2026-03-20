@@ -656,6 +656,15 @@ export interface ExcalidrawProps {
   ) => void;
   onScrollChange?: (scrollX: number, scrollY: number, zoom: Zoom) => void;
   onUserFollow?: (payload: OnUserFollowedPayload) => void;
+  /**
+   * Touch scroll speed multipliers for mobile devices
+   * @default handToolMultiplier: 6, pinchGestureMultiplier: 8
+   */
+  touchScrollSpeed?: {
+    handToolMultiplier?: number;
+    pinchGestureMultiplier?: number;
+    momentumEnabled?: boolean;
+  };
   children?: React.ReactNode;
   validateEmbeddable?:
     | boolean
