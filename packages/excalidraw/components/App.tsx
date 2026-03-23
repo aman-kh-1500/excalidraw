@@ -2357,12 +2357,12 @@ class App extends React.Component<AppProps, AppState> {
                             />
                           )}
                           {this.renderFrameNames()}
-                          {this.state.activeLockedId && (
+                          {/* {this.state.activeLockedId && (
                             <UnlockPopup
                               app={this}
                               activeLockedId={this.state.activeLockedId}
                             />
-                          )}
+                          )} */}
                           {showShapeSwitchPanel && (
                             <ConvertElementTypePopup app={this} />
                           )}
@@ -3031,6 +3031,7 @@ class App extends React.Component<AppProps, AppState> {
   }
 
   public async componentDidMount() {
+    console.log('[EXCALIDRAW APP] componentDidMount - this.props.touchScrollSpeed:', this.props.touchScrollSpeed);
     this.unmounted = false;
     this.api = this.createExcalidrawAPI();
 
@@ -3332,6 +3333,11 @@ class App extends React.Component<AppProps, AppState> {
   }
 
   componentDidUpdate(prevProps: AppProps, prevState: AppState) {
+    if (prevProps.touchScrollSpeed !== this.props.touchScrollSpeed) {
+      console.log('[EXCALIDRAW APP] touchScrollSpeed prop changed!');
+      console.log('[EXCALIDRAW APP] prev:', prevProps.touchScrollSpeed);
+      console.log('[EXCALIDRAW APP] current:', this.props.touchScrollSpeed);
+    }
     // must be updated *before* state change listeners are triggered below
     if (!this._initialized && !this.state.isLoading) {
       this._initialized = true;
@@ -6525,7 +6531,7 @@ class App extends React.Component<AppProps, AppState> {
       .getNonDeletedFramesLikes()
       .filter(
         (frame): frame is ExcalidrawFrameLikeElement =>
-          !frame.locked && isCursorInFrame(sceneCoords, frame, elementsMap),
+          isCursorInFrame(sceneCoords, frame, elementsMap),
       );
 
     return frames.length ? frames[frames.length - 1] : null;
@@ -6582,7 +6588,9 @@ class App extends React.Component<AppProps, AppState> {
           state,
         );
 
-        const pinchMultiplier = this.props.touchScrollSpeed?.pinchGestureMultiplier ?? 5;
+        const pinchMultiplier = this.props.touchScrollSpeed?.pinchGestureMultiplier ?? 3;
+        console.log('[EXCALIDRAW PINCH] touchScrollSpeed prop:', this.props.touchScrollSpeed);
+        console.log('[EXCALIDRAW PINCH] pinchMultiplier:', pinchMultiplier);
         this.translateCanvas({
           zoom: zoomState.zoom,
           // Configurable multiplier for smooth, responsive scrolling on touchscreen devices
@@ -7903,6 +7911,7 @@ class App extends React.Component<AppProps, AppState> {
     let lastTimestamp = Date.now();
     
     const onPointerMove = withBatchedUpdatesThrottled((event: PointerEvent) => {
+      console.log('[EXCALIDRAW PAN] onPointerMove triggered');
       const deltaX = lastX - event.clientX;
       const deltaY = lastY - event.clientY;
       const currentTimestamp = Date.now();
@@ -7952,8 +7961,12 @@ class App extends React.Component<AppProps, AppState> {
 
       // Apply significantly faster scrolling for touch devices (configurable multiplier for hand tool)
       // This provides smooth, responsive panning similar to PDF viewers
-      const handToolMultiplier = this.props.touchScrollSpeed?.handToolMultiplier ?? 4;
+      const handToolMultiplier = this.props.touchScrollSpeed?.handToolMultiplier ?? 3;
+      console.log('[EXCALIDRAW HAND TOOL] touchScrollSpeed prop:', this.props.touchScrollSpeed);
+      console.log('[EXCALIDRAW HAND TOOL] handToolMultiplier:', handToolMultiplier);
+      console.log('[EXCALIDRAW HAND TOOL] isTouchScreen:', this.editorInterface.isTouchScreen);
       const touchMultiplier = this.editorInterface.isTouchScreen ? handToolMultiplier : 1;
+      console.log('[EXCALIDRAW HAND TOOL] final touchMultiplier:', touchMultiplier);
       this.translateCanvas({
         scrollX: this.state.scrollX - (deltaX * touchMultiplier) / this.state.zoom.value,
         scrollY: this.state.scrollY - (deltaY * touchMultiplier) / this.state.zoom.value,
@@ -8650,6 +8663,11 @@ class App extends React.Component<AppProps, AppState> {
       y: gridY,
     });
 
+    // Block drawing outside frames (in margin/gap areas)
+    if (!topLayerFrame) {
+      return;
+    }
+
     const simulatePressure = event.pressure === 0.5;
 
     const element = newFreeDrawElement({
@@ -8960,6 +8978,11 @@ class App extends React.Component<AppProps, AppState> {
         y: gridY,
       });
 
+      // Block drawing outside frames (in margin/gap areas)
+      if (!topLayerFrame) {
+        return;
+      }
+
       /* If arrow is pre-arrowheads, it will have undefined for both start and end arrowheads.
       If so, we want it to be null for start and "arrow" for end. If the linear item is not
       an arrow, we want it to be null for both. Otherwise, we want it to use the
@@ -9160,6 +9183,11 @@ class App extends React.Component<AppProps, AppState> {
       x: gridX,
       y: gridY,
     });
+
+    // Block drawing outside frames (in margin/gap areas)
+    if (!topLayerFrame) {
+      return;
+    }
 
     const baseElementAttributes = {
       x: gridX,
@@ -12421,6 +12449,7 @@ class App extends React.Component<AppProps, AppState> {
     (
       event: WheelEvent | React.WheelEvent<HTMLDivElement | HTMLCanvasElement>,
     ) => {
+      console.log('[EXCALIDRAW WHEEL] handleWheel triggered');
       if (
         !(
           event.target instanceof HTMLCanvasElement ||
@@ -12445,6 +12474,9 @@ class App extends React.Component<AppProps, AppState> {
       }
 
       const { deltaX, deltaY } = event;
+      const scrollMultiplier = this.props.touchScrollSpeed?.handToolMultiplier ?? 3;
+      console.log('[EXCALIDRAW WHEEL] touchScrollSpeed:', this.props.touchScrollSpeed);
+      console.log('[EXCALIDRAW WHEEL] scrollMultiplier:', scrollMultiplier);
       // note that event.ctrlKey is necessary to handle pinch zooming
       if (event.metaKey || event.ctrlKey) {
         const sign = Math.sign(deltaY);
@@ -12482,14 +12514,14 @@ class App extends React.Component<AppProps, AppState> {
       if (event.shiftKey) {
         this.translateCanvas(({ zoom, scrollX }) => ({
           // on Mac, shift+wheel tends to result in deltaX
-          scrollX: scrollX - (deltaY || deltaX) / zoom.value,
+          scrollX: scrollX - (scrollMultiplier * (deltaY || deltaX)) / zoom.value,
         }));
         return;
       }
 
       this.translateCanvas(({ zoom, scrollX, scrollY }) => ({
-        scrollX: scrollX - deltaX / zoom.value,
-        scrollY: scrollY - deltaY / zoom.value,
+        scrollX: scrollX - (scrollMultiplier * deltaX) / zoom.value,
+        scrollY: scrollY - (scrollMultiplier * deltaY) / zoom.value,
       }));
     },
   );

@@ -99,6 +99,7 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
     showDeprecatedFonts,
     renderScrollbars,
     disableContextMenu,
+    touchScrollSpeed,
   } = props;
 
   const canvasActions = props.UIOptions?.canvasActions;
@@ -215,6 +216,7 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
           showDeprecatedFonts={showDeprecatedFonts}
           renderScrollbars={renderScrollbars}
           disableContextMenu={disableContextMenu}
+          touchScrollSpeed={touchScrollSpeed}
         >
           {children}
         </App>
@@ -224,6 +226,10 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
 };
 
 const areEqual = (prevProps: ExcalidrawProps, nextProps: ExcalidrawProps) => {
+  console.log('[EXCALIDRAW MEMO] Comparing props for re-render');
+  console.log('[EXCALIDRAW MEMO] prev.touchScrollSpeed:', prevProps.touchScrollSpeed);
+  console.log('[EXCALIDRAW MEMO] next.touchScrollSpeed:', nextProps.touchScrollSpeed);
+  
   // short-circuit early
   if (prevProps.children !== nextProps.children) {
     return false;
@@ -280,7 +286,9 @@ const areEqual = (prevProps: ExcalidrawProps, nextProps: ExcalidrawProps) => {
     return prevUIOptions[key] === nextUIOptions[key];
   });
 
-  return isUIOptionsSame && isShallowEqual(prev, next);
+  const result = isUIOptionsSame && isShallowEqual(prev, next);
+  console.log('[EXCALIDRAW MEMO] areEqual result (true = skip re-render):', result);
+  return result;
 };
 
 export const Excalidraw = React.memo(ExcalidrawBase, areEqual);
