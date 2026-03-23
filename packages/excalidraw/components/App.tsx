@@ -11895,6 +11895,13 @@ class App extends React.Component<AppProps, AppState> {
   ) => {
     event.preventDefault();
 
+    if (this.props.disableContextMenu) {
+      if (this.state.contextMenu) {
+        this.setState({ contextMenu: null });
+      }
+      return;
+    }
+
     if (
       (("pointerType" in event.nativeEvent &&
         event.nativeEvent.pointerType === "touch") ||

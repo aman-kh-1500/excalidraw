@@ -665,6 +665,7 @@ export interface ExcalidrawProps {
     pinchGestureMultiplier?: number;
     momentumEnabled?: boolean;
   };
+  disableContextMenu?: boolean;
   children?: React.ReactNode;
   validateEmbeddable?:
     | boolean
