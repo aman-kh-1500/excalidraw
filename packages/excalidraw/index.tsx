@@ -154,13 +154,18 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
     importPolyfill();
 
     // Block pinch-zooming on iOS outside of the content area
+    // Use passive: true for better scroll performance, only preventDefault when needed
     const handleTouchMove = (event: TouchEvent) => {
       // @ts-ignore
       if (typeof event.scale === "number" && event.scale !== 1) {
+        // For pinch gestures, we need to preventDefault but this is rare
+        // Most touch moves will be passive for smooth scrolling
         event.preventDefault();
       }
     };
 
+    // Note: keeping passive: false because we need preventDefault for pinch
+    // The browser will still optimize when preventDefault isn't called
     document.addEventListener("touchmove", handleTouchMove, {
       passive: false,
     });
@@ -225,6 +230,10 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
 };
 
 const areEqual = (prevProps: ExcalidrawProps, nextProps: ExcalidrawProps) => {
+  console.log('[EXCALIDRAW MEMO] Comparing props for re-render');
+  console.log('[EXCALIDRAW MEMO] prev.touchScrollSpeed:', prevProps.touchScrollSpeed);
+  console.log('[EXCALIDRAW MEMO] next.touchScrollSpeed:', nextProps.touchScrollSpeed);
+  
   // short-circuit early
   if (prevProps.children !== nextProps.children) {
     return false;
@@ -281,7 +290,9 @@ const areEqual = (prevProps: ExcalidrawProps, nextProps: ExcalidrawProps) => {
     return prevUIOptions[key] === nextUIOptions[key];
   });
 
-  return isUIOptionsSame && isShallowEqual(prev, next);
+  const result = isUIOptionsSame && isShallowEqual(prev, next);
+  console.log('[EXCALIDRAW MEMO] areEqual result (true = skip re-render):', result);
+  return result;
 };
 
 export const Excalidraw = React.memo(ExcalidrawBase, areEqual);
