@@ -499,7 +499,7 @@ import type { RoughCanvas } from "roughjs/bin/canvas";
 import type { Action, ActionResult } from "../actions/types";
 
 const AppContext = React.createContext<AppClassProperties>(null!);
-const AppPropsContext = React.createContext<AppProps>(null!);
+export const AppPropsContext = React.createContext<AppProps>(null!);
 
 const editorInterfaceContextInitialValue: EditorInterface = {
   formFactor: "desktop",
@@ -807,8 +807,8 @@ class App extends React.Component<AppProps, AppState> {
       objectsSnapModeEnabled,
       gridModeEnabled: gridModeEnabled ?? defaultAppState.gridModeEnabled,
       name,
-      width: window.innerWidth,
-      height: window.innerHeight,
+      width: props.viewportSize?.width ?? props.canvasSize?.width ?? window.innerWidth,
+      height: props.viewportSize?.height ?? props.canvasSize?.height ?? window.innerHeight,
     };
 
     this.refreshEditorInterface();
@@ -2992,8 +2992,16 @@ class App extends React.Component<AppProps, AppState> {
       return;
     }
 
-    const { width: editorWidth, height: editorHeight } =
+    const { width: containerWidth, height: containerHeight } =
       container.getBoundingClientRect();
+    const editorWidth =
+      this.props.viewportSize?.width ??
+      this.props.canvasSize?.width ??
+      containerWidth;
+    const editorHeight =
+      this.props.viewportSize?.height ??
+      this.props.canvasSize?.height ??
+      containerHeight;
 
     const storedDesktopUIMode = loadDesktopUIModePreference();
     const userAgentDescriptor = createUserAgentDescriptor(
@@ -3118,7 +3126,9 @@ class App extends React.Component<AppProps, AppState> {
         this.refreshEditorInterface();
         this.updateDOMRect();
       });
-      this.resizeObserver?.observe(this.excalidrawContainerRef.current);
+      if (!this.props.canvasSize && !this.props.viewportSize) {
+        this.resizeObserver?.observe(this.excalidrawContainerRef.current);
+      }
     }
 
     const searchParams = new URLSearchParams(window.location.search.slice(1));
@@ -12702,11 +12712,19 @@ class App extends React.Component<AppProps, AppState> {
     if (this.excalidrawContainerRef?.current) {
       const excalidrawContainer = this.excalidrawContainerRef.current;
       const {
-        width,
-        height,
+        width: containerWidth,
+        height: containerHeight,
         left: offsetLeft,
         top: offsetTop,
       } = excalidrawContainer.getBoundingClientRect();
+      const width =
+        this.props.viewportSize?.width ??
+        this.props.canvasSize?.width ??
+        containerWidth;
+      const height =
+        this.props.viewportSize?.height ??
+        this.props.canvasSize?.height ??
+        containerHeight;
       const {
         width: currentWidth,
         height: currentHeight,

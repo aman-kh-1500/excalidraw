@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from "react";
 
 import { isShallowEqual } from "@excalidraw/common";
 
+import { AppPropsContext } from "../App";
 import type {
   NonDeletedExcalidrawElement,
   NonDeletedSceneElementsMap,
@@ -33,13 +34,16 @@ type StaticCanvasProps = {
 const StaticCanvas = (props: StaticCanvasProps) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const isComponentMounted = useRef(false);
+  const appProps = React.useContext(AppPropsContext);
+  const canvasWidth = appProps.canvasSize?.width ?? props.appState.width;
+  const canvasHeight = appProps.canvasSize?.height ?? props.appState.height;
 
   useEffect(() => {
-    props.canvas.style.width = `${props.appState.width}px`;
-    props.canvas.style.height = `${props.appState.height}px`;
-    props.canvas.width = props.appState.width * props.scale;
-    props.canvas.height = props.appState.height * props.scale;
-  }, [props.appState.height, props.appState.width, props.canvas, props.scale]);
+    props.canvas.style.width = `${canvasWidth}px`;
+    props.canvas.style.height = `${canvasHeight}px`;
+    props.canvas.width = canvasWidth * props.scale;
+    props.canvas.height = canvasHeight * props.scale;
+  }, [canvasHeight, canvasWidth, props.canvas, props.scale]);
 
   useEffect(() => {
     const wrapper = wrapperRef.current;

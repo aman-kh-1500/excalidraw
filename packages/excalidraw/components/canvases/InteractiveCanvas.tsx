@@ -32,6 +32,8 @@ import type {
 } from "../../types";
 import type { DOMAttributes } from "react";
 
+import { AppPropsContext } from "../App";
+
 type InteractiveCanvasProps = {
   containerRef: React.RefObject<HTMLDivElement | null>;
   canvas: HTMLCanvasElement | null;
@@ -86,6 +88,9 @@ export const INTERACTIVE_SCENE_ANIMATION_KEY = "animateInteractiveScene";
 const InteractiveCanvas = (props: InteractiveCanvasProps) => {
   const isComponentMounted = useRef(false);
   const rendererParams = useRef(null as InteractiveSceneRenderConfig | null);
+  const appProps = React.useContext(AppPropsContext);
+  const canvasWidth = appProps.canvasSize?.width ?? props.appState.width;
+  const canvasHeight = appProps.canvasSize?.height ?? props.appState.height;
 
   useEffect(() => {
     if (!isComponentMounted.current) {
@@ -202,16 +207,16 @@ const InteractiveCanvas = (props: InteractiveCanvasProps) => {
     <canvas
       className="excalidraw__canvas interactive"
       style={{
-        width: props.appState.width,
-        height: props.appState.height,
+        width: canvasWidth,
+        height: canvasHeight,
         cursor:
           props.appState.viewModeEnabled &&
           props.appState.activeTool.type !== "laser"
             ? CURSOR_TYPE.GRAB
             : CURSOR_TYPE.AUTO,
       }}
-      width={props.appState.width * props.scale}
-      height={props.appState.height * props.scale}
+      width={canvasWidth * props.scale}
+      height={canvasHeight * props.scale}
       ref={props.handleCanvasRef}
       onContextMenu={props.onContextMenu}
       onClick={props.onClick}

@@ -1,7 +1,8 @@
-import { useEffect, useRef } from "react";
+import { useContext, useEffect, useRef } from "react";
 
 import type { NonDeletedSceneElementsMap } from "@excalidraw/element/types";
 
+import { AppPropsContext } from "../App";
 import { isRenderThrottlingEnabled } from "../../reactUtils";
 import { renderNewElementScene } from "../../renderer/renderNewElementScene";
 
@@ -23,6 +24,10 @@ interface NewElementCanvasProps {
 
 const NewElementCanvas = (props: NewElementCanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const appProps = useContext(AppPropsContext);
+  const canvasWidth = appProps.canvasSize?.width ?? props.appState.width;
+  const canvasHeight = appProps.canvasSize?.height ?? props.appState.height;
+
   useEffect(() => {
     if (!canvasRef.current) {
       return;
@@ -46,11 +51,11 @@ const NewElementCanvas = (props: NewElementCanvasProps) => {
     <canvas
       className="excalidraw__canvas"
       style={{
-        width: props.appState.width,
-        height: props.appState.height,
+        width: canvasWidth,
+        height: canvasHeight,
       }}
-      width={props.appState.width * props.scale}
-      height={props.appState.height * props.scale}
+      width={canvasWidth * props.scale}
+      height={canvasHeight * props.scale}
       ref={canvasRef}
     />
   );
