@@ -138,6 +138,7 @@ export const actionZoomIn = register({
   icon: ZoomInIcon,
   trackEvent: { category: "canvas" },
   perform: (_elements, appState, _, app) => {
+    const maxZoom = app.props.maxZoom ?? MAX_ZOOM;
     return {
       appState: {
         ...appState,
@@ -145,7 +146,11 @@ export const actionZoomIn = register({
           {
             viewportX: appState.width / 2 + appState.offsetLeft,
             viewportY: appState.height / 2 + appState.offsetTop,
-            nextZoom: getNormalizedZoom(appState.zoom.value + ZOOM_STEP),
+            nextZoom: getNormalizedZoom(
+              appState.zoom.value + ZOOM_STEP,
+              app.props.minZoom,
+              app.props.maxZoom,
+            ),
           },
           appState,
         ),
@@ -154,19 +159,22 @@ export const actionZoomIn = register({
       captureUpdate: CaptureUpdateAction.EVENTUALLY,
     };
   },
-  PanelComponent: ({ updateData, appState }) => (
-    <ToolButton
-      type="button"
-      className="zoom-in-button zoom-button"
-      icon={ZoomInIcon}
-      title={`${t("buttons.zoomIn")} — ${getShortcutKey("CtrlOrCmd++")}`}
-      aria-label={t("buttons.zoomIn")}
-      disabled={appState.zoom.value >= MAX_ZOOM}
-      onClick={() => {
-        updateData(null);
-      }}
-    />
-  ),
+  PanelComponent: ({ updateData, appState, app }) => {
+    const maxZoom = app.props.maxZoom ?? MAX_ZOOM;
+    return (
+      <ToolButton
+        type="button"
+        className="zoom-in-button zoom-button"
+        icon={ZoomInIcon}
+        title={`${t("buttons.zoomIn")} — ${getShortcutKey("CtrlOrCmd++")}`}
+        aria-label={t("buttons.zoomIn")}
+        disabled={appState.zoom.value >= maxZoom}
+        onClick={() => {
+          updateData(null);
+        }}
+      />
+    );
+  },
   keyTest: (event) =>
     (event.code === CODES.EQUAL || event.code === CODES.NUM_ADD) &&
     (event[KEYS.CTRL_OR_CMD] || event.shiftKey),
@@ -179,6 +187,7 @@ export const actionZoomOut = register({
   viewMode: true,
   trackEvent: { category: "canvas" },
   perform: (_elements, appState, _, app) => {
+    const minZoom = app.props.minZoom ?? MIN_ZOOM;
     return {
       appState: {
         ...appState,
@@ -186,7 +195,11 @@ export const actionZoomOut = register({
           {
             viewportX: appState.width / 2 + appState.offsetLeft,
             viewportY: appState.height / 2 + appState.offsetTop,
-            nextZoom: getNormalizedZoom(appState.zoom.value - ZOOM_STEP),
+            nextZoom: getNormalizedZoom(
+              appState.zoom.value - ZOOM_STEP,
+              app.props.minZoom,
+              app.props.maxZoom,
+            ),
           },
           appState,
         ),
@@ -195,19 +208,22 @@ export const actionZoomOut = register({
       captureUpdate: CaptureUpdateAction.EVENTUALLY,
     };
   },
-  PanelComponent: ({ updateData, appState }) => (
-    <ToolButton
-      type="button"
-      className="zoom-out-button zoom-button"
-      icon={ZoomOutIcon}
-      title={`${t("buttons.zoomOut")} — ${getShortcutKey("CtrlOrCmd+-")}`}
-      aria-label={t("buttons.zoomOut")}
-      disabled={appState.zoom.value <= MIN_ZOOM}
-      onClick={() => {
-        updateData(null);
-      }}
-    />
-  ),
+  PanelComponent: ({ updateData, appState, app }) => {
+    const minZoom = app.props.minZoom ?? MIN_ZOOM;
+    return (
+      <ToolButton
+        type="button"
+        className="zoom-out-button zoom-button"
+        icon={ZoomOutIcon}
+        title={`${t("buttons.zoomOut")} — ${getShortcutKey("CtrlOrCmd+-")}`}
+        aria-label={t("buttons.zoomOut")}
+        disabled={appState.zoom.value <= minZoom}
+        onClick={() => {
+          updateData(null);
+        }}
+      />
+    );
+  },
   keyTest: (event) =>
     (event.code === CODES.MINUS || event.code === CODES.NUM_SUBTRACT) &&
     (event[KEYS.CTRL_OR_CMD] || event.shiftKey),
@@ -220,6 +236,9 @@ export const actionResetZoom = register({
   viewMode: true,
   trackEvent: { category: "canvas" },
   perform: (_elements, appState, _, app) => {
+    const minZoom = app.props.minZoom ?? MIN_ZOOM;
+    // Reset to 1 or minZoom, whichever is larger
+    const resetZoom = Math.max(1, minZoom);
     return {
       appState: {
         ...appState,
@@ -227,7 +246,11 @@ export const actionResetZoom = register({
           {
             viewportX: appState.width / 2 + appState.offsetLeft,
             viewportY: appState.height / 2 + appState.offsetTop,
-            nextZoom: getNormalizedZoom(1),
+            nextZoom: getNormalizedZoom(
+              resetZoom,
+              app.props.minZoom,
+              app.props.maxZoom,
+            ),
           },
           appState,
         ),
