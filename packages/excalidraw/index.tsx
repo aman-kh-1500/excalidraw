@@ -102,6 +102,8 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
     touchScrollSpeed,
     canvasSize,
     viewportSize,
+    minZoom,
+    maxZoom,
   } = props;
 
   const canvasActions = props.UIOptions?.canvasActions;
@@ -221,6 +223,8 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
           touchScrollSpeed={touchScrollSpeed}
           canvasSize={canvasSize}
           viewportSize={viewportSize}
+          minZoom={minZoom}
+          maxZoom={maxZoom}
         >
           {children}
         </App>

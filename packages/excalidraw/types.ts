@@ -674,6 +674,15 @@ export interface ExcalidrawProps {
     pinchGestureMultiplier?: number;
     momentumEnabled?: boolean;
   };
+  /**
+   * Minimum zoom level (default: 0.1)
+   * Can be set dynamically to prevent zooming out beyond content
+   */
+  minZoom?: number;
+  /**
+   * Maximum zoom level (default: 30)
+   */
+  maxZoom?: number;
   disableContextMenu?: boolean;
   children?: React.ReactNode;
   validateEmbeddable?:

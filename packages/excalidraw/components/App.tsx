@@ -4304,7 +4304,11 @@ class App extends React.Component<AppProps, AppState> {
         {
           viewportX: this.state.width / 2 + this.state.offsetLeft,
           viewportY: this.state.height / 2 + this.state.offsetTop,
-          nextZoom: getNormalizedZoom(value),
+          nextZoom: getNormalizedZoom(
+            value,
+            this.props.minZoom,
+            this.props.maxZoom,
+          ),
         },
         this.state,
       ),
@@ -5653,7 +5657,11 @@ class App extends React.Component<AppProps, AppState> {
           {
             viewportX: this.lastViewportPosition.x,
             viewportY: this.lastViewportPosition.y,
-            nextZoom: getNormalizedZoom(initialScale * event.scale),
+            nextZoom: getNormalizedZoom(
+              initialScale * event.scale,
+              this.props.minZoom,
+              this.props.maxZoom,
+            ),
           },
           state,
         ),
@@ -6556,6 +6564,18 @@ class App extends React.Component<AppProps, AppState> {
           }
         }
 
+        // Block text creation outside frames (in margin/gap areas)
+        if (!container) {
+          const topLayerFrame = this.getTopLayerFrameAtSceneCoords({
+            x: sceneX,
+            y: sceneY,
+          });
+
+          if (!topLayerFrame) {
+            return;
+          }
+        }
+
         this.startTextEditing({
           sceneX,
           sceneY,
@@ -6737,7 +6757,11 @@ class App extends React.Component<AppProps, AppState> {
           : distance / gesture.initialDistance;
 
       const nextZoom = scaleFactor
-        ? getNormalizedZoom(initialScale * scaleFactor)
+        ? getNormalizedZoom(
+            initialScale * scaleFactor,
+            this.props.minZoom,
+            this.props.maxZoom,
+          )
         : this.state.zoom.value;
 
       this.setState((state) => {
@@ -8804,6 +8828,19 @@ class App extends React.Component<AppProps, AppState> {
       sceneX = element.x + element.width / 2;
       sceneY = element.y + element.height / 2;
     }
+
+    // Block text creation outside frames (in margin/gap areas)
+    if (!container) {
+      const topLayerFrame = this.getTopLayerFrameAtSceneCoords({
+        x: sceneX,
+        y: sceneY,
+      });
+
+      if (!topLayerFrame) {
+        return;
+      }
+    }
+
     this.startTextEditing({
       sceneX,
       sceneY,
@@ -8955,6 +8992,16 @@ class App extends React.Component<AppProps, AppState> {
         ? null
         : this.getEffectiveGridSize(),
     );
+
+    // Block embeddable creation outside frames (in margin/gap areas)
+    const topLayerFrame = this.getTopLayerFrameAtSceneCoords({
+      x: gridX,
+      y: gridY,
+    });
+
+    if (!topLayerFrame) {
+      return;
+    }
 
     const embedLink = getEmbedLink(link);
 
@@ -12677,7 +12724,11 @@ class App extends React.Component<AppProps, AppState> {
             {
               viewportX: this.lastViewportPosition.x,
               viewportY: this.lastViewportPosition.y,
-              nextZoom: getNormalizedZoom(newZoom),
+              nextZoom: getNormalizedZoom(
+                newZoom,
+                this.props.minZoom,
+                this.props.maxZoom,
+              ),
             },
             state,
           ),
