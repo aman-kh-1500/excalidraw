@@ -8189,7 +8189,9 @@ class App extends React.Component<AppProps, AppState> {
       }
 
       // Apply faster scrolling for touch devices
-      const touchMultiplier = this.editorInterface.isTouchScreen ? 2 : 1;
+      const touchMultiplier = this.editorInterface.isTouchScreen
+        ? this.props.scrollSensitivity ?? 2
+        : 1;
       this.translateCanvas({
         scrollX: this.state.scrollX - (deltaX * touchMultiplier) / this.state.zoom.value,
         scrollY: this.state.scrollY - (deltaY * touchMultiplier) / this.state.zoom.value,

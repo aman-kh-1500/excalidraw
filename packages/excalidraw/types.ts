@@ -656,6 +656,7 @@ export interface ExcalidrawProps {
     pointerDownState: PointerDownState,
   ) => void;
   onScrollChange?: (scrollX: number, scrollY: number, zoom: Zoom) => void;
+  scrollSensitivity?: number;
   onUserFollow?: (payload: OnUserFollowedPayload) => void;
   canvasSize?: {
     width: number;
