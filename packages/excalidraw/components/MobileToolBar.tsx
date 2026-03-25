@@ -11,7 +11,9 @@ import { isHandToolActive } from "../appState";
 
 import { useTunnels } from "../context/tunnels";
 
+import { useEditorInterface } from "./App";
 import { HandButton } from "./HandButton";
+import { PenModeButton } from "./PenModeButton";
 import { ToolButton } from "./ToolButton";
 import DropdownMenu from "./dropdownMenu/DropdownMenu";
 import { ToolPopover } from "./ToolPopover";
@@ -84,14 +86,17 @@ const LINEAR_ELEMENT_TOOLS = [
 type MobileToolBarProps = {
   app: AppClassProperties;
   onHandToolToggle: () => void;
+  onPenModeToggle: AppClassProperties["togglePenMode"];
   setAppState: React.Component<any, UIAppState>["setState"];
 };
 
 export const MobileToolBar = ({
   app,
   onHandToolToggle,
+  onPenModeToggle,
   setAppState,
 }: MobileToolBarProps) => {
+  const editorInterface = useEditorInterface();
   const activeTool = app.state.activeTool;
   const [isOtherShapesMenuOpen, setIsOtherShapesMenuOpen] = useState(false);
   const [lastActiveGenericShape, setLastActiveGenericShape] = useState<
@@ -199,6 +204,16 @@ export const MobileToolBar = ({
         }
       }}
     >
+      {/* Pen Mode Button */}
+      <PenModeButton
+        checked={app.state.penMode}
+        onChange={() => onPenModeToggle(null)}
+        title={t("toolBar.penMode")}
+        isMobile
+        penDetected={app.state.penDetected}
+        isTouchScreen={editorInterface.isTouchScreen}
+      />
+
       {/* Hand Tool */}
       <HandButton
         checked={isHandToolActive(app.state)}

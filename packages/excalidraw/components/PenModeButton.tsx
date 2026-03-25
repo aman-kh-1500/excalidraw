@@ -14,35 +14,33 @@ type PenModeIconProps = {
   zenModeEnabled?: boolean;
   isMobile?: boolean;
   penDetected: boolean;
+  isTouchScreen?: boolean;
 };
 
 const DEFAULT_SIZE: ToolButtonSize = "medium";
 
 export const PenModeButton = (props: PenModeIconProps) => {
-  if (!props.penDetected) {
+  if (!props.penDetected && !props.isTouchScreen) {
     return null;
   }
 
   return (
-    <label
+    <button
       className={clsx(
-        "ToolIcon ToolIcon__penMode",
+        "ToolIcon ToolIcon_type_button ToolIcon__penMode",
         `ToolIcon_size_${DEFAULT_SIZE}`,
         {
           "is-mobile": props.isMobile,
+          "ToolIcon--selected": props.checked,
         },
       )}
       title={`${props.title}`}
+      type="button"
+      aria-label={props.title}
+      aria-pressed={props.checked}
+      onClick={props.onChange}
     >
-      <input
-        className="ToolIcon_type_checkbox"
-        type="checkbox"
-        name={props.name}
-        onChange={props.onChange}
-        checked={props.checked}
-        aria-label={props.title}
-      />
       <div className="ToolIcon__icon">{PenModeIcon}</div>
-    </label>
+    </button>
   );
 };

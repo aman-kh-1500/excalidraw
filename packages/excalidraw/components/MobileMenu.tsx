@@ -14,6 +14,7 @@ import { FixedSideContainer } from "./FixedSideContainer";
 import { Island } from "./Island";
 
 import { PenModeButton } from "./PenModeButton";
+import { useEditorInterface } from "./App";
 
 import type { ActionManager } from "../actions/manager";
 import type {
@@ -62,6 +63,7 @@ export const MobileMenu = ({
   app,
   onPenModeToggle,
 }: MobileMenuProps) => {
+  const editorInterface = useEditorInterface();
   const {
     WelcomeScreenCenterTunnel,
     MainMenuTunnel,
@@ -83,6 +85,7 @@ export const MobileMenu = ({
                 title={t("toolBar.penMode")}
                 isMobile
                 penDetected={appState.penDetected}
+                isTouchScreen={editorInterface.isTouchScreen}
               />
               <DefaultSidebarTriggerTunnel.Out />
             </>
@@ -120,6 +123,7 @@ export const MobileMenu = ({
       <MobileToolBar
         app={app}
         onHandToolToggle={onHandToolToggle}
+        onPenModeToggle={onPenModeToggle}
         setAppState={setAppState}
       />
     );

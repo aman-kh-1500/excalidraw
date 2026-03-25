@@ -349,6 +349,7 @@ const LayerUI = ({
                               onChange={() => onPenModeToggle(null)}
                               title={t("toolBar.penMode")}
                               penDetected={appState.penDetected}
+                              isTouchScreen={editorInterface.isTouchScreen}
                             />
                             <LockButton
                               checked={appState.activeTool.locked}
