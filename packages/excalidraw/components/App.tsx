@@ -4472,6 +4472,33 @@ class App extends React.Component<AppProps, AppState> {
     this.cancelInProgressAnimation?.();
     this.maybeUnfollowRemoteUser();
     this.setState(state);
+    // Constrain scroll to keep frame content within viewport bounds
+    const frames = this.scene.getNonDeletedFramesLikes();
+    if (frames.length > 0) {
+      this.setState((s) => {
+        let fMinX = Infinity;
+        let fMinY = Infinity;
+        let fMaxX = -Infinity;
+        let fMaxY = -Infinity;
+        for (const f of frames) {
+          if (f.x < fMinX) { fMinX = f.x; }
+          if (f.y < fMinY) { fMinY = f.y; }
+          if (f.x + f.width > fMaxX) { fMaxX = f.x + f.width; }
+          if (f.y + f.height > fMaxY) { fMaxY = f.y + f.height; }
+        }
+        const zoom = s.zoom.value;
+        const maxSX = -fMinX;
+        const minSX = -(fMaxX - s.width / zoom);
+        const maxSY = -fMinY;
+        const minSY = -(fMaxY - s.height / zoom);
+        const cX = Math.min(maxSX, Math.max(minSX, s.scrollX));
+        const cY = Math.min(maxSY, Math.max(minSY, s.scrollY));
+        if (cX !== s.scrollX || cY !== s.scrollY) {
+          return { scrollX: cX, scrollY: cY };
+        }
+        return null;
+      });
+    }
   };
 
   setToast = (toast: AppState["toast"]) => {
