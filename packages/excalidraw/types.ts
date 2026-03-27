@@ -657,6 +657,7 @@ export interface ExcalidrawProps {
   ) => void;
   onScrollChange?: (scrollX: number, scrollY: number, zoom: Zoom) => void;
   scrollSensitivity?: number;
+  strokeWidthSlider?: boolean;
   onUserFollow?: (payload: OnUserFollowedPayload) => void;
   canvasSize?: {
     width: number;

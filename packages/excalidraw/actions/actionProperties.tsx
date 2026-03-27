@@ -546,6 +546,7 @@ export const actionChangeFillStyle = register<ExcalidrawElement["fillStyle"]>({
   },
 });
 
+// Original stroke width component (kept for easy switching)
 export const actionChangeStrokeWidth = register<
   ExcalidrawElement["strokeWidth"]
 >({
@@ -614,6 +615,118 @@ export const actionChangeStrokeWidth = register<
       </div>
     </fieldset>
   ),
+});
+
+// NEW: Stroke width slider component with 10 values
+export const actionChangeStrokeWidthSlider = register<
+  ExcalidrawElement["strokeWidth"]
+>({
+  name: "changeStrokeWidthSlider",
+  label: "labels.strokeWidth",
+  trackEvent: false,
+  perform: (elements, appState, value) => {
+    return {
+      elements: changeProperty(elements, appState, (el) =>
+        newElementWith(el, {
+          strokeWidth: value,
+        }),
+      ),
+      appState: { ...appState, currentItemStrokeWidth: value },
+      captureUpdate: CaptureUpdateAction.IMMEDIATELY,
+    };
+  },
+  PanelComponent: ({ elements, appState, updateData, app, data }) => {
+    const currentValue = getFormValue(
+      elements,
+      app,
+      (element) => element.strokeWidth,
+      (element) => element.hasOwnProperty("strokeWidth"),
+      (hasSelection) =>
+        hasSelection ? null : appState.currentItemStrokeWidth,
+    );
+
+    // Define 10 stroke width values for slider
+    const sliderValues = [
+      0.1,   // Ultra thin
+      0.25,  // Thinnest
+      0.5,   // Extra thin
+      0.75,  // Light
+      1,     // Thin (default)
+      1.5,   // Medium
+      2,     // Bold
+      3,     // Heavy
+      4,     // Extra bold
+      6,     // Ultra bold
+    ];
+
+    // Find closest slider index for current value
+    const currentIndex = sliderValues.reduce((closestIndex, value, index) => {
+      if (currentValue === undefined || currentValue === null) return closestIndex;
+      const currentDiff = Math.abs(sliderValues[closestIndex] - currentValue);
+      const newDiff = Math.abs(value - currentValue);
+      return newDiff < currentDiff ? index : closestIndex;
+    }, 0);
+
+    return (
+      <fieldset>
+        <legend>{t("labels.strokeWidth")} (Slider)</legend>
+        <div style={{ padding: "0.5rem 0" }}>
+          <div style={{ 
+            display: "flex", 
+            alignItems: "center", 
+            gap: "0.5rem",
+            marginBottom: "0.5rem"
+          }}>
+            <span style={{ fontSize: "0.75rem", opacity: 0.7 }}>
+              {sliderValues[currentIndex].toFixed(2)}
+            </span>
+            <input
+              type="range"
+              min="0"
+              max={sliderValues.length - 1}
+              step="1"
+              value={currentIndex}
+              onChange={(e) => {
+                const index = parseInt(e.target.value);
+                updateData(sliderValues[index]);
+              }}
+              style={{ 
+                flex: 1,
+                height: "4px",
+                background: "#ddd",
+                outline: "none",
+                cursor: "pointer"
+              }}
+            />
+            <span style={{ fontSize: "0.75rem", opacity: 0.7 }}>
+              {sliderValues[sliderValues.length - 1].toFixed(1)}
+            </span>
+          </div>
+          {/* Visual stroke width preview */}
+          <div style={{ 
+            display: "flex", 
+            justifyContent: "space-between", 
+            alignItems: "center",
+            marginTop: "0.5rem"
+          }}>
+            <div style={{ fontSize: "0.7rem", opacity: 0.6 }}>Thin</div>
+            <svg width="50" height="20" style={{ overflow: "visible" }}>
+              <line
+                x1="5"
+                y1="10"
+                x2="45"
+                y2="10"
+                stroke="currentColor"
+                strokeWidth={sliderValues[currentIndex]}
+                strokeLinecap="round"
+              />
+            </svg>
+            <div style={{ fontSize: "0.7rem", opacity: 0.6 }}>Bold</div>
+          </div>
+        </div>
+      </fieldset>
+    );
+  },
 });
 
 export const actionChangeSloppiness = register<ExcalidrawElement["roughness"]>({

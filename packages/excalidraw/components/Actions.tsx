@@ -199,7 +199,7 @@ export const SelectedShapeActions = ({
 
       {(hasStrokeWidth(appState.activeTool.type) ||
         targetElements.some((element) => hasStrokeWidth(element.type))) &&
-        renderAction("changeStrokeWidth")}
+        renderAction(app.props.strokeWidthSlider ? "changeStrokeWidthSlider" : "changeStrokeWidth")}
 
       {(appState.activeTool.type === "freedraw" ||
         targetElements.some((element) => element.type === "freedraw")) &&
@@ -321,12 +321,14 @@ const CombinedShapeProperties = ({
   setAppState,
   targetElements,
   container,
+  app,
 }: {
   targetElements: ExcalidrawElement[];
   appState: UIAppState;
   renderAction: ActionManager["renderAction"];
   setAppState: React.Component<any, AppState>["setState"];
   container: HTMLDivElement | null;
+  app: AppClassProperties;
 }) => {
   const showFillIcons =
     (hasBackground(appState.activeTool.type) &&
@@ -393,7 +395,7 @@ const CombinedShapeProperties = ({
                 targetElements.some((element) =>
                   hasStrokeWidth(element.type),
                 )) &&
-                renderAction("changeStrokeWidth")}
+                renderAction(app.props.strokeWidthSlider ? "changeStrokeWidthSlider" : "changeStrokeWidth")}
               {(hasStrokeStyle(appState.activeTool.type) ||
                 targetElements.some((element) =>
                   hasStrokeStyle(element.type),
@@ -832,6 +834,7 @@ export const CompactShapeActions = ({
         setAppState={setAppState}
         targetElements={targetElements}
         container={container}
+        app={app}
       />
 
       <CombinedArrowProperties
@@ -968,6 +971,7 @@ export const MobileShapeActions = ({
           setAppState={setAppState}
           targetElements={targetElements}
           container={container}
+          app={app}
         />
         {/* Combined Arrow Properties */}
         <CombinedArrowProperties
