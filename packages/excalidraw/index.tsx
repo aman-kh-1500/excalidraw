@@ -100,7 +100,6 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
     showDeprecatedFonts,
     renderScrollbars,
     disableContextMenu,
-    touchScrollSpeed,
     canvasSize,
     viewportSize,
     minZoom,
@@ -222,7 +221,6 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
           showDeprecatedFonts={showDeprecatedFonts}
           renderScrollbars={renderScrollbars}
           disableContextMenu={disableContextMenu}
-          touchScrollSpeed={touchScrollSpeed}
           canvasSize={canvasSize}
           viewportSize={viewportSize}
           minZoom={minZoom}
@@ -237,8 +235,6 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
 
 const areEqual = (prevProps: ExcalidrawProps, nextProps: ExcalidrawProps) => {
   console.log('[EXCALIDRAW MEMO] Comparing props for re-render');
-  console.log('[EXCALIDRAW MEMO] prev.touchScrollSpeed:', prevProps.touchScrollSpeed);
-  console.log('[EXCALIDRAW MEMO] next.touchScrollSpeed:', nextProps.touchScrollSpeed);
   
   // short-circuit early
   if (prevProps.children !== nextProps.children) {

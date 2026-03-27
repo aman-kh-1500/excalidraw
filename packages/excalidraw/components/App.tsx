@@ -3063,7 +3063,6 @@ class App extends React.Component<AppProps, AppState> {
   }
 
   public async componentDidMount() {
-    console.log('[EXCALIDRAW APP] componentDidMount - this.props.touchScrollSpeed:', this.props.touchScrollSpeed);
     this.unmounted = false;
     this.api = this.createExcalidrawAPI();
 
@@ -3367,11 +3366,6 @@ class App extends React.Component<AppProps, AppState> {
   }
 
   componentDidUpdate(prevProps: AppProps, prevState: AppState) {
-    if (prevProps.touchScrollSpeed !== this.props.touchScrollSpeed) {
-      console.log('[EXCALIDRAW APP] touchScrollSpeed prop changed!');
-      console.log('[EXCALIDRAW APP] prev:', prevProps.touchScrollSpeed);
-      console.log('[EXCALIDRAW APP] current:', this.props.touchScrollSpeed);
-    }
     // must be updated *before* state change listeners are triggered below
     if (!this._initialized && !this.state.isLoading) {
       this._initialized = true;
@@ -6801,16 +6795,13 @@ class App extends React.Component<AppProps, AppState> {
           state,
         );
 
-        const pinchMultiplier = this.props.touchScrollSpeed?.pinchGestureMultiplier ?? 3;
-        console.log('[EXCALIDRAW PINCH] touchScrollSpeed prop:', this.props.touchScrollSpeed);
-        console.log('[EXCALIDRAW PINCH] pinchMultiplier:', pinchMultiplier);
         this.translateCanvas({
           zoom: zoomState.zoom,
           // 2x multiplier is just a magic number that makes this work correctly
           // on touchscreen devices (note: if we get report that panning is slower/faster
           // than actual movement, consider swapping with devicePixelRatio)
-          scrollX: zoomState.scrollX + 4 * (deltaX / nextZoom),
-          scrollY: zoomState.scrollY + 4 * (deltaY / nextZoom),
+          scrollX: zoomState.scrollX + 5 * (deltaX / nextZoom),
+          scrollY: zoomState.scrollY + 5 * (deltaY / nextZoom),
           shouldCacheIgnoreZoom: true,
         });
 
@@ -12722,9 +12713,7 @@ class App extends React.Component<AppProps, AppState> {
       }
 
       const { deltaX, deltaY } = event;
-      const scrollMultiplier = this.props.touchScrollSpeed?.handToolMultiplier ?? 3;
-      console.log('[EXCALIDRAW WHEEL] touchScrollSpeed:', this.props.touchScrollSpeed);
-      console.log('[EXCALIDRAW WHEEL] scrollMultiplier:', scrollMultiplier);
+      const scrollMultiplier = 3;
       // note that event.ctrlKey is necessary to handle pinch zooming
       if (event.metaKey || event.ctrlKey) {
         const sign = Math.sign(deltaY);
