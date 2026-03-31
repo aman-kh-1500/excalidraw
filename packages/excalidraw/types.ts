@@ -695,6 +695,17 @@ export interface ExcalidrawProps {
   hideLibrary?: boolean;
   hideHelp?: boolean;
   /**
+   * Lock zoom when in editing mode (non-freedraw and non-pen-mode).
+   * When true, scale factor will be 1 instead of distance/initialDistance.
+   * @default false
+   */
+  lockZoomInEditingMode?: boolean;
+  /**
+   * Also lock pinch zoom for the hand tool when lockZoomInEditingMode is enabled.
+   * @default false
+   */
+  lockZoomInHandMode?: boolean;
+  /**
    * Called before exporting to a file.
    *
    * Allows the host app to intercept and delay saving until async operations

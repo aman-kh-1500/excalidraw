@@ -1025,6 +1025,14 @@ export const MobileShapeActions = ({
           gap: GAP,
         }}
       >
+                {/* Zoom actions for lockZoomInEditingMode */}
+        {(app.props.lockZoomInEditingMode || app.props.lockZoomInHandMode || !appState.viewModeEnabled) && (
+          <>
+            <div className="compact-action-item">{renderAction("zoomOut")}</div>
+            <div className="compact-action-item">{renderAction("resetZoom")}</div>
+            <div className="compact-action-item">{renderAction("zoomIn")}</div>
+          </>
+        )}
         <div className="compact-action-item">{renderAction("undo")}</div>
         <div className="compact-action-item">{renderAction("redo")}</div>
         {showDuplicateOutside && (

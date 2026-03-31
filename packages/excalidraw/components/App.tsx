@@ -6775,10 +6775,26 @@ class App extends React.Component<AppProps, AppState> {
       gesture.lastCenter = center;
 
       const distance = getDistance(Array.from(gesture.pointers.values()));
+
+      // Calculate the distance ratio for non-freedraw/pen-mode
+      let distanceRatio = distance / gesture.initialDistance;
+
+      if (
+        this.state.activeTool.type === "hand" &&
+        this.props.lockZoomInHandMode
+      ) {
+        distanceRatio = 1;
+      } else if (
+        this.state.activeTool.type !== "hand" &&
+        this.props.lockZoomInEditingMode
+      ) {
+        distanceRatio = 1;
+      }
+      
       const scaleFactor =
         this.state.activeTool.type === "freedraw" && this.state.penMode
           ? 1
-          : distance / gesture.initialDistance;
+          : distanceRatio;
 
       const nextZoom = scaleFactor
         ? getNormalizedZoom(

@@ -108,6 +108,8 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
     hideMainMenu,
     hideLibrary,
     hideHelp,
+    lockZoomInEditingMode = false,
+    lockZoomInHandMode = false,
   } = props;
 
   const canvasActions = props.UIOptions?.canvasActions;
@@ -233,6 +235,8 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
           hideMainMenu={hideMainMenu}
           hideLibrary={hideLibrary}
           hideHelp={hideHelp}
+          lockZoomInEditingMode={lockZoomInEditingMode}
+          lockZoomInHandMode={lockZoomInHandMode}
         >
           {children}
         </App>
