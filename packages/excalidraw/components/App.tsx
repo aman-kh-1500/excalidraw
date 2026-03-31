@@ -2171,6 +2171,9 @@ class App extends React.Component<AppProps, AppState> {
                               !this.state.zenModeEnabled &&
                               !this.scene.getElementsIncludingDeleted().length
                             }
+                            hideMainMenu={this.props.hideMainMenu}
+                            hideLibrary={this.props.hideLibrary}
+                            hideHelp={this.props.hideHelp}
                             app={this}
                             isCollaborating={this.props.isCollaborating}
                             generateLinkForSelection={
@@ -12688,7 +12691,6 @@ class App extends React.Component<AppProps, AppState> {
     (
       event: WheelEvent | React.WheelEvent<HTMLDivElement | HTMLCanvasElement>,
     ) => {
-      console.log('[EXCALIDRAW WHEEL] handleWheel triggered');
       if (
         !(
           event.target instanceof HTMLCanvasElement ||

@@ -691,6 +691,9 @@ export interface ExcalidrawProps {
   aiEnabled?: boolean;
   showDeprecatedFonts?: boolean;
   renderScrollbars?: boolean;
+  hideMainMenu?: boolean;
+  hideLibrary?: boolean;
+  hideHelp?: boolean;
   /**
    * Called before exporting to a file.
    *

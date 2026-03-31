@@ -105,6 +105,9 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
     viewportSize,
     minZoom,
     maxZoom,
+    hideMainMenu,
+    hideLibrary,
+    hideHelp,
   } = props;
 
   const canvasActions = props.UIOptions?.canvasActions;
@@ -227,6 +230,9 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
           viewportSize={viewportSize}
           minZoom={minZoom}
           maxZoom={maxZoom}
+          hideMainMenu={hideMainMenu}
+          hideLibrary={hideLibrary}
+          hideHelp={hideHelp}
         >
           {children}
         </App>
