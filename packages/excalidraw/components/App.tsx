@@ -6819,8 +6819,12 @@ class App extends React.Component<AppProps, AppState> {
           // 2x multiplier is just a magic number that makes this work correctly
           // on touchscreen devices (note: if we get report that panning is slower/faster
           // than actual movement, consider swapping with devicePixelRatio)
-          scrollX: zoomState.scrollX + 5 * (deltaX / nextZoom),
-          scrollY: zoomState.scrollY + 5 * (deltaY / nextZoom),
+          scrollX:
+            zoomState.scrollX +
+            (this.props.pinchPanSensitivity ?? 5) * (deltaX / nextZoom),
+          scrollY:
+            zoomState.scrollY +
+            (this.props.pinchPanSensitivity ?? 5) * (deltaY / nextZoom),
           shouldCacheIgnoreZoom: true,
         });
 
@@ -12735,7 +12739,7 @@ class App extends React.Component<AppProps, AppState> {
       // note that event.ctrlKey is necessary to handle pinch zooming
       if (event.metaKey || event.ctrlKey) {
         const sign = Math.sign(deltaY);
-        const MAX_STEP = ZOOM_STEP * 100;
+        const MAX_STEP = (this.props.zoomStep ?? 0.1) * 100;
         const absDelta = Math.abs(deltaY);
         let delta = deltaY;
         if (absDelta > MAX_STEP) {

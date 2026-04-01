@@ -92,6 +92,8 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
     onPointerUp,
     onScrollChange,
     scrollSensitivity,
+    pinchPanSensitivity,
+    zoomStep,
     strokeWidthSlider,
     onDuplicate,
     children,
@@ -220,6 +222,8 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
           onPointerUp={onPointerUp}
           onScrollChange={onScrollChange}
           scrollSensitivity={scrollSensitivity}
+          pinchPanSensitivity={pinchPanSensitivity}
+          zoomStep={zoomStep}
           strokeWidthSlider={strokeWidthSlider}
           onDuplicate={onDuplicate}
           validateEmbeddable={validateEmbeddable}

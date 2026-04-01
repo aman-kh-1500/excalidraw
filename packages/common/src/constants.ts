@@ -201,7 +201,7 @@ export const FRAME_STYLE = {
   roughness: 0 as ExcalidrawElement["roughness"],
   roundness: null as ExcalidrawElement["roundness"],
   backgroundColor: "transparent" as ExcalidrawElement["backgroundColor"],
-  radius: 8,
+  radius: 0,
   nameOffsetY: 3,
   nameColorLightTheme: "#999999",
   nameColorDarkTheme: "#7a7a7a",
