@@ -116,6 +116,11 @@
     "sass": "1.51.0",
     "tunnel-rat": "0.1.2"
   },
+  "bundleDependencies": [
+    "@excalidraw/common",
+    "@excalidraw/element",
+    "@excalidraw/math"
+  ],
   "devDependencies": {
     "@size-limit/preset-big-lib": "9.0.0",
     "@testing-library/dom": "10.4.0",
