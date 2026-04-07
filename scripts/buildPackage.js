@@ -62,7 +62,6 @@ const getConfig = (outdir) => ({
   bundle: true,
   splitting: true,
   format: "esm",
-  packages: "external",
   plugins: [
     sassPlugin({
       precompile,
