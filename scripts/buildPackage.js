@@ -76,7 +76,12 @@ const getConfig = (outdir) => ({
     "@excalidraw/element": path.resolve(__dirname, "../packages/element/src"),
     "@excalidraw/math": path.resolve(__dirname, "../packages/math/src"),
   },
-  external: ["react", "react-dom"],
+  external: [
+    "react",
+    "react-dom",
+    "use-sync-external-store",
+    "use-sync-external-store/with-selector",
+  ],
   loader: {
     ".woff2": "file",
   },
