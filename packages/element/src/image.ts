@@ -27,6 +27,11 @@ export const loadHTMLImageElement = (dataURL: DataURL) => {
     image.onerror = (error) => {
       reject(error);
     };
+    // IMPORTANT: Set crossOrigin to "anonymous" to request CORS-enabled
+    // resources and prevent the "tainted canvas" security error.
+    // This requires the server to send appropriate CORS headers (e.g.,
+    // Access-Control-Allow-Origin).*.
+    image.crossOrigin = "anonymous";
     image.src = dataURL;
   });
 };
