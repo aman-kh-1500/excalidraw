@@ -311,6 +311,18 @@ body.excalidraw-cursor-resize * {
     gap: 0.5rem;
   }
 
+  .layer-ui__wrapper__bottom-right {
+    position: absolute;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 99;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
+    pointer-events: all;
+  }
+
   .App-toolbar-content {
     display: flex;
     flex-direction: column;

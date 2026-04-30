@@ -43,6 +43,10 @@ type MobileMenuProps = {
     isMobile: boolean,
     appState: UIAppState,
   ) => JSX.Element | null;
+  renderBottomRightUI?: (
+    isMobile: boolean,
+    appState: UIAppState,
+  ) => JSX.Element | null;
   renderSidebars: () => JSX.Element | null;
   renderWelcomeScreen: boolean;
   UIOptions: AppProps["UIOptions"];
@@ -57,6 +61,7 @@ export const MobileMenu = ({
   onHandToolToggle,
   renderTopLeftUI,
   renderTopRightUI,
+  renderBottomRightUI,
   renderSidebars,
   renderWelcomeScreen,
   UIOptions,
@@ -179,6 +184,12 @@ export const MobileMenu = ({
       <FixedSideContainer side="top" className="App-top-bar">
         {renderAppTopBar()}
       </FixedSideContainer>
+
+      {renderBottomRightUI && (
+        <div className="layer-ui__wrapper__bottom-right">
+          {renderBottomRightUI(true, appState)}
+        </div>
+      )}
     </>
   );
 };

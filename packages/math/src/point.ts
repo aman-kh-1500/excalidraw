@@ -36,6 +36,9 @@ export function pointFrom<Point extends GlobalPoint | LocalPoint>(
   xOrCoords: number | { x: number; y: number },
   y?: number,
 ): Point {
+  if (xOrCoords == null) {
+    return [0, 0] as Point;
+  }
   return typeof xOrCoords === "object"
     ? ([xOrCoords.x, xOrCoords.y] as Point)
     : ([xOrCoords, y!] as Point);
