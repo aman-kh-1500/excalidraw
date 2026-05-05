@@ -152,6 +152,17 @@ export const getFormFactor = (
 export const deriveStylesPanelMode = (
   editorInterface: EditorInterface,
 ): StylesPanelMode => {
+  // If it's a touch device, don't show desktop-style dialogs
+  if (editorInterface.isTouchScreen) {
+    // For mobile touch devices, show mobile version
+    if (editorInterface.formFactor === "phone") {
+      return "mobile";
+    }
+    // For tablet touch devices (iPads, etc.), show compact/ipad version
+    return "compact";
+  }
+
+  // For non-touch devices, use original logic
   if (editorInterface.formFactor === "phone") {
     return "mobile";
   }
