@@ -577,7 +577,7 @@ const LayerUI = ({
           }
         />
       )}
-      {editorInterface.formFactor === "phone" && (
+      {editorInterface.formFactor === "phone" || editorInterface.formFactor === "tablet" && (
         <MobileMenu
           app={app}
           appState={appState}
