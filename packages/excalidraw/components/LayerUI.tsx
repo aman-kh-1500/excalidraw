@@ -596,7 +596,7 @@ const LayerUI = ({
           UIOptions={UIOptions}
         />
       )}
-      {editorInterface.formFactor !== "phone" && (
+      {editorInterface.formFactor !== "phone" && editorInterface.formFactor !== "tablet" && (
         <>
           <div
             className="layer-ui__wrapper"
