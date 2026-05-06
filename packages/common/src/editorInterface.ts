@@ -171,7 +171,8 @@ export const deriveStylesPanelMode = (
     return "compact";
   }
 
-  return editorInterface.desktopUIMode;
+  return "compact";
+  // return editorInterface.desktopUIMode;
 };
 
 export const createUserAgentDescriptor = (
