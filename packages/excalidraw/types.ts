@@ -700,6 +700,7 @@ export interface ExcalidrawProps {
   hideMainMenu?: boolean;
   hideLibrary?: boolean;
   hideHelp?: boolean;
+  hideExtraTools?: boolean;
   /**
    * Lock zoom when in editing mode (non-freedraw and non-pen-mode).
    * When true, scale factor will be 1 instead of distance/initialDistance.

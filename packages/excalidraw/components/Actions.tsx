@@ -1194,7 +1194,8 @@ export const ShapesSwitcher = ({
       )}
       <div className="App-toolbar__divider" />
 
-      <DropdownMenu open={isExtraToolsMenuOpen}>
+      {!app.props.hideExtraTools && (
+        <DropdownMenu open={isExtraToolsMenuOpen}>
         <DropdownMenu.Trigger
           className={clsx("App-toolbar__extra-tools-trigger", {
             "App-toolbar__extra-tools-trigger--selected":
@@ -1286,6 +1287,7 @@ export const ShapesSwitcher = ({
           )}
         </DropdownMenu.Content>
       </DropdownMenu>
+      )}
     </>
   );
 };

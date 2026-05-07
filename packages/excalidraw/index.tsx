@@ -111,6 +111,7 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
     hideMainMenu,
     hideLibrary,
     hideHelp,
+    hideExtraTools,
     lockZoomInEditingMode = false,
     lockZoomInHandMode = false,
   } = props;
@@ -241,6 +242,7 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
           hideMainMenu={hideMainMenu}
           hideLibrary={hideLibrary}
           hideHelp={hideHelp}
+          hideExtraTools={hideExtraTools}
           lockZoomInEditingMode={lockZoomInEditingMode}
           lockZoomInHandMode={lockZoomInHandMode}
         >
