@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Popover } from "radix-ui";
 
 import {
@@ -82,6 +82,11 @@ import {
   DotsHorizontalIcon,
   SelectionIcon,
   pencilIcon,
+  RectangleIcon,
+  DiamondIcon,
+  EllipseIcon,
+  ArrowIcon,
+  LineIcon,
 } from "./icons";
 
 import { Island } from "./Island";
@@ -1062,9 +1067,25 @@ export const ShapesSwitcher = ({
   UIOptions: AppProps["UIOptions"];
 }) => {
   const [isExtraToolsMenuOpen, setIsExtraToolsMenuOpen] = useState(false);
+  const [lastActiveShape, setLastActiveShape] = useState<
+    "rectangle" | "diamond" | "ellipse" | "arrow" | "line"
+  >("rectangle");
   const stylesPanelMode = useStylesPanelMode();
   const isFullStylesPanel = stylesPanelMode === "full";
   const isCompactStylesPanel = stylesPanelMode === "compact";
+
+  // keep lastActiveShape in sync with active tool if user switches via other UI
+  useEffect(() => {
+    if (
+      activeTool.type === "rectangle" ||
+      activeTool.type === "diamond" ||
+      activeTool.type === "ellipse" ||
+      activeTool.type === "arrow" ||
+      activeTool.type === "line"
+    ) {
+      setLastActiveShape(activeTool.type);
+    }
+  }, [activeTool.type]);
 
   const SELECTION_TOOLS = [
     {
@@ -1077,6 +1098,30 @@ export const ShapesSwitcher = ({
       icon: LassoIcon,
       title: capitalizeString(t("toolBar.lasso")),
     },
+  ] as const;
+
+  const SHAPE_AND_LINEAR_TOOLS = [
+    {
+      type: "rectangle",
+      icon: RectangleIcon,
+      title: capitalizeString(t("toolBar.rectangle")),
+    },
+    {
+      type: "diamond",
+      icon: DiamondIcon,
+      title: capitalizeString(t("toolBar.diamond")),
+    },
+    {
+      type: "ellipse",
+      icon: EllipseIcon,
+      title: capitalizeString(t("toolBar.ellipse")),
+    },
+    {
+      type: "arrow",
+      icon: ArrowIcon,
+      title: capitalizeString(t("toolBar.arrow")),
+    },
+    { type: "line", icon: LineIcon, title: capitalizeString(t("toolBar.line")) },
   ] as const;
 
   const frameToolSelected = activeTool.type === "frame";
@@ -1092,6 +1137,76 @@ export const ShapesSwitcher = ({
 
   return (
     <>
+      {/* Selection ToolPopover */}
+      <ToolPopover
+        key={"selection-popover"}
+        app={app}
+        options={SELECTION_TOOLS}
+        activeTool={activeTool}
+        defaultOption={app.state.preferredSelectionTool.type}
+        namePrefix="selectionType"
+        title={capitalizeString(t("toolBar.selection"))}
+        data-testid="toolbar-selection"
+        onToolChange={(type: string) => {
+          if (type === "selection" || type === "lasso") {
+            app.setActiveTool({ type });
+            setAppState({
+              preferredSelectionTool: { type, initialized: true },
+            });
+          }
+        }}
+        displayedOption={
+          SELECTION_TOOLS.find(
+            (tool) =>
+              tool.type === app.state.preferredSelectionTool.type,
+          ) || SELECTION_TOOLS[0]
+        }
+        fillable={activeTool.type === "selection"}
+      />
+
+      {/* Shape and Linear Tools ToolPopover (Rectangle/Diamond/Ellipse/Arrow/Line) */}
+      <ToolPopover
+        key={"shape-linear-popover"}
+        app={app}
+        options={SHAPE_AND_LINEAR_TOOLS}
+        activeTool={activeTool}
+        defaultOption={lastActiveShape}
+        namePrefix="shapeLinearType"
+        title={capitalizeString(
+          t(
+            lastActiveShape === "rectangle"
+              ? "toolBar.rectangle"
+              : lastActiveShape === "diamond"
+              ? "toolBar.diamond"
+              : lastActiveShape === "ellipse"
+              ? "toolBar.ellipse"
+              : lastActiveShape === "arrow"
+              ? "toolBar.arrow"
+              : lastActiveShape === "line"
+              ? "toolBar.line"
+              : "toolBar.rectangle",
+          ),
+        )}
+        data-testid="toolbar-rectangle"
+        onToolChange={(type: string) => {
+          if (
+            type === "rectangle" ||
+            type === "diamond" ||
+            type === "ellipse" ||
+            type === "arrow" ||
+            type === "line"
+          ) {
+            setLastActiveShape(type);
+            app.setActiveTool({ type });
+          }
+        }}
+        displayedOption={
+          SHAPE_AND_LINEAR_TOOLS.find((tool) => tool.type === lastActiveShape) ||
+          SHAPE_AND_LINEAR_TOOLS[0]
+        }
+        fillable={activeTool.type === "arrow" || activeTool.type === "line"}
+      />
+
       {getToolbarTools(app).map(
         ({ value, icon, key, numericKey, fillable, toolbar }) => {
           if (
@@ -1106,6 +1221,20 @@ export const ShapesSwitcher = ({
             return null;
           }
 
+          // Skip rendering individual selection, rectangle, diamond, ellipse, arrow, line buttons
+          // as they are now handled by ToolPopover components
+          if (
+            value === "selection" ||
+            value === "lasso" ||
+            value === "rectangle" ||
+            value === "diamond" ||
+            value === "ellipse" ||
+            value === "arrow" ||
+            value === "line"
+          ) {
+            return null;
+          }
+
           const label = t(`toolBar.${value}`);
           const letter =
             key && capitalizeString(typeof key === "string" ? key : key[0]);
@@ -1114,41 +1243,6 @@ export const ShapesSwitcher = ({
             : `${numericKey}`;
           const keybindingLabel =
             value === "hand" ? undefined : numericKey || letter;
-
-          // when in compact styles panel mode (tablet)
-          // use a ToolPopover for selection/lasso toggle as well
-          if (
-            (value === "selection" || value === "lasso") &&
-            isCompactStylesPanel
-          ) {
-            return (
-              <ToolPopover
-                key={"selection-popover"}
-                app={app}
-                options={SELECTION_TOOLS}
-                activeTool={activeTool}
-                defaultOption={app.state.preferredSelectionTool.type}
-                namePrefix="selectionType"
-                title={capitalizeString(t("toolBar.selection"))}
-                data-testid="toolbar-selection"
-                onToolChange={(type: string) => {
-                  if (type === "selection" || type === "lasso") {
-                    app.setActiveTool({ type });
-                    setAppState({
-                      preferredSelectionTool: { type, initialized: true },
-                    });
-                  }
-                }}
-                displayedOption={
-                  SELECTION_TOOLS.find(
-                    (tool) =>
-                      tool.type === app.state.preferredSelectionTool.type,
-                  ) || SELECTION_TOOLS[0]
-                }
-                fillable={activeTool.type === "selection"}
-              />
-            );
-          }
 
           return (
             <ToolButton
@@ -1166,14 +1260,6 @@ export const ShapesSwitcher = ({
               onPointerDown={({ pointerType }) => {
                 if (!app.state.penDetected && pointerType === "pen") {
                   app.togglePenMode(true);
-                }
-
-                if (value === "selection") {
-                  if (app.state.activeTool.type === "selection") {
-                    app.setActiveTool({ type: "lasso" });
-                  } else {
-                    app.setActiveTool({ type: "selection" });
-                  }
                 }
               }}
               onChange={({ pointerType }) => {

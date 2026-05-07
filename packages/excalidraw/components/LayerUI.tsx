@@ -343,12 +343,13 @@ const LayerUI = ({
                             "App-toolbar--compact": isCompactStylesPanel,
                           })}
                         >
-                          <HintViewer
+                          {/* HintViewer disabled - hiding helper text */}
+                          {/* <HintViewer
                             appState={appState}
                             isMobile={editorInterface.formFactor === "phone"}
                             editorInterface={editorInterface}
                             app={app}
-                          />
+                          /> */}
                           {heading}
                           <Stack.Row gap={spacing.toolbarInnerRowGap}>
                             <PenModeButton
