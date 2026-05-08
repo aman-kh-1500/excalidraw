@@ -12,6 +12,8 @@ type LockIconProps = {
   checked: boolean;
   onChange?(): void;
   isMobile?: boolean;
+  showLabel?: boolean;
+  buttonLabel?: string;
 };
 
 const DEFAULT_SIZE: ToolButtonSize = "medium";
@@ -44,6 +46,11 @@ export const LockButton = (props: LockIconProps) => {
       />
       <div className="ToolIcon__icon">
         {props.checked ? ICONS.CHECKED : ICONS.UNCHECKED}
+        {props.showLabel && (props.buttonLabel || props.title) && (
+          <span className="ToolIcon__label">
+            {props.buttonLabel || props.title}
+          </span>
+        )}
       </div>
     </label>
   );

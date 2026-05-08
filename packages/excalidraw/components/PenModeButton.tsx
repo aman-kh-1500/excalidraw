@@ -15,6 +15,8 @@ type PenModeIconProps = {
   isMobile?: boolean;
   penDetected: boolean;
   isTouchScreen?: boolean;
+  showLabel?: boolean;
+  buttonLabel?: string;
 };
 
 const DEFAULT_SIZE: ToolButtonSize = "medium";
@@ -40,7 +42,14 @@ export const PenModeButton = (props: PenModeIconProps) => {
       aria-pressed={props.checked}
       onClick={props.onChange}
     >
-      <div className="ToolIcon__icon">{PenModeIcon}</div>
+      <div className="ToolIcon__icon">
+        {PenModeIcon}
+        {props.showLabel && (props.buttonLabel || props.title) && (
+          <span className="ToolIcon__label">
+            {props.buttonLabel || props.title}
+          </span>
+        )}
+      </div>
     </button>
   );
 };

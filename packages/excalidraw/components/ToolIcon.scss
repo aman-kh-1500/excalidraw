@@ -159,6 +159,19 @@
     user-select: none;
   }
 
+  .ToolIcon__label {
+    position: absolute;
+    bottom: 0px;
+    left: 36%;
+    transform: translateX(-50%);
+    font-size: 0.4rem;
+    color: var(--text-color);
+    font-family: var(--ui-font);
+    white-space: nowrap;
+    user-select: none;
+    text-transform: capitalize;
+  }
+
   .unlocked-icon {
     :root[dir="ltr"] & {
       left: 2px;

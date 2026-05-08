@@ -35,6 +35,8 @@ type ToolButtonBaseProps = {
   className?: string;
   style?: CSSProperties;
   isLoading?: boolean;
+  showLabel?: boolean;
+  buttonLabel?: string;
 };
 
 type ToolButtonProps =
@@ -200,6 +202,11 @@ export const ToolButton = React.forwardRef(
           {props.keyBindingLabel && (
             <span className="ToolIcon__keybinding">
               {props.keyBindingLabel}
+            </span>
+          )}
+          {props.showLabel && (props.buttonLabel || props.label) && (
+            <span className="ToolIcon__label">
+              {props.buttonLabel || props.label}
             </span>
           )}
         </div>

@@ -33,6 +33,7 @@ type ToolPopoverProps = {
   onToolChange: (type: string) => void;
   displayedOption: ToolOption;
   fillable?: boolean;
+  buttonLabel?: string;
 };
 
 export const ToolPopover = ({
@@ -47,6 +48,7 @@ export const ToolPopover = ({
   onToolChange,
   displayedOption,
   fillable = false,
+  buttonLabel,
 }: ToolPopoverProps) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const currentType = activeTool.type;
@@ -83,6 +85,9 @@ export const ToolPopover = ({
           title={title}
           aria-label={title}
           data-testid={dataTestId}
+          label={title}
+          buttonLabel={buttonLabel}
+          showLabel={true}
           onPointerDown={() => {
             setIsPopupOpen((v) => !v);
             onToolChange(defaultOption);
@@ -106,9 +111,11 @@ export const ToolPopover = ({
             checked={currentType === type}
             name={`${namePrefix}-option`}
             title={title || capitalizeString(type)}
-            keyBindingLabel=""
+            keyBindingLabel={undefined}
             aria-label={title || capitalizeString(type)}
             data-testid={`toolbar-${type}`}
+            label={title || capitalizeString(type)}
+            showLabel={true}
             onChange={() => {
               if (app.state.activeTool.type !== type) {
                 trackEvent("toolbar", type, "ui");

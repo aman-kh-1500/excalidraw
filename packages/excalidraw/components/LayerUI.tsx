@@ -359,11 +359,15 @@ const LayerUI = ({
                               title={t("toolBar.penMode")}
                               penDetected={appState.penDetected}
                               isTouchScreen={editorInterface.isTouchScreen}
+                              showLabel={true}
+                              buttonLabel="PM"
                             />
                             <LockButton
                               checked={appState.activeTool.locked}
                               onChange={onLockToggle}
                               title={t("toolBar.lock")}
+                              showLabel={true}
+                              buttonLabel="Lock"
                             />
 
                             <div className="App-toolbar__divider" />
@@ -578,7 +582,7 @@ const LayerUI = ({
           }
         />
       )}
-      {editorInterface.formFactor === "phone" && (
+      {/* {editorInterface.formFactor === "phone" && (
         <MobileMenu
           app={app}
           appState={appState}
@@ -596,8 +600,7 @@ const LayerUI = ({
           renderWelcomeScreen={renderWelcomeScreen}
           UIOptions={UIOptions}
         />
-      )}
-      {editorInterface.formFactor !== "phone" && (
+      )} */}
         <>
           <div
             className="layer-ui__wrapper"
@@ -651,7 +654,6 @@ const LayerUI = ({
           </div>
           {renderSidebars()}
         </>
-      )}
     </>
   );
 

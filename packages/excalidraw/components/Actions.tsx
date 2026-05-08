@@ -1147,6 +1147,7 @@ export const ShapesSwitcher = ({
         namePrefix="selectionType"
         title={capitalizeString(t("toolBar.selection"))}
         data-testid="toolbar-selection"
+        buttonLabel="Select"
         onToolChange={(type: string) => {
           if (type === "selection" || type === "lasso") {
             app.setActiveTool({ type });
@@ -1188,6 +1189,7 @@ export const ShapesSwitcher = ({
           ),
         )}
         data-testid="toolbar-rectangle"
+        buttonLabel={"Shape"}
         onToolChange={(type: string) => {
           if (
             type === "rectangle" ||
@@ -1241,8 +1243,14 @@ export const ShapesSwitcher = ({
           const shortcut = letter
             ? `${letter} ${t("helpDialog.or")} ${numericKey}`
             : `${numericKey}`;
-          const keybindingLabel =
-            value === "hand" ? undefined : numericKey || letter;
+
+          const buttonLabels: Record<string, string> = {
+            hand: "Pan",
+            freedraw: "Pen",
+            eraser: "Eraser",
+            text: "Text",
+            image: "Image",
+          };
 
           return (
             <ToolButton
@@ -1253,10 +1261,13 @@ export const ShapesSwitcher = ({
               checked={activeTool.type === value}
               name="editor-current-shape"
               title={`${capitalizeString(label)} — ${shortcut}`}
-              keyBindingLabel={keybindingLabel}
+              keyBindingLabel={undefined}
               aria-label={capitalizeString(label)}
               aria-keyshortcuts={shortcut}
               data-testid={`toolbar-${value}`}
+              label={label}
+              buttonLabel={buttonLabels[value] || label}
+              showLabel={true}
               onPointerDown={({ pointerType }) => {
                 if (!app.state.penDetected && pointerType === "pen") {
                   app.togglePenMode(true);
