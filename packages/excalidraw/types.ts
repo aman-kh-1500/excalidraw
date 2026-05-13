@@ -713,6 +713,17 @@ export interface ExcalidrawProps {
    */
   lockZoomInHandMode?: boolean;
   /**
+   * When true, pen mode will be automatically enabled when a stylus is first
+   * detected. When false, users must manually toggle pen mode via the PM button.
+   * @default true
+   */
+  enablePenModeOnStylus?: boolean;
+  /**
+   * When true, the lock tool button is hidden from the toolbar.
+   * @default false
+   */
+  hideLockButton?: boolean;
+  /**
    * Called before exporting to a file.
    *
    * Allows the host app to intercept and delay saving until async operations

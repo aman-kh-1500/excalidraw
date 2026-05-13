@@ -103,6 +103,8 @@ interface LayerUIProps {
   hideMainMenu?: boolean;
   hideLibrary?: boolean;
   hideHelp?: boolean;
+  enablePenModeOnStylus?: boolean;
+  hideLockButton?: boolean;
 }
 
 const DefaultMainMenu: React.FC<{
@@ -166,6 +168,8 @@ const LayerUI = ({
   hideMainMenu,
   hideLibrary,
   hideHelp,
+  enablePenModeOnStylus,
+  hideLockButton,
 }: LayerUIProps) => {
   const editorInterface = useEditorInterface();
   const stylesPanelMode = useStylesPanelMode();
@@ -352,23 +356,27 @@ const LayerUI = ({
                           /> */}
                           {heading}
                           <Stack.Row gap={spacing.toolbarInnerRowGap}>
-                            <PenModeButton
-                              zenModeEnabled={appState.zenModeEnabled}
-                              checked={appState.penMode}
-                              onChange={() => onPenModeToggle(null)}
-                              title={t("toolBar.penMode")}
-                              penDetected={appState.penDetected}
-                              isTouchScreen={editorInterface.isTouchScreen}
-                              showLabel={true}
-                              buttonLabel="PM"
-                            />
-                            <LockButton
-                              checked={appState.activeTool.locked}
-                              onChange={onLockToggle}
-                              title={t("toolBar.lock")}
-                              showLabel={true}
-                              buttonLabel="Lock"
-                            />
+                            {enablePenModeOnStylus !== false && (
+                              <PenModeButton
+                                zenModeEnabled={appState.zenModeEnabled}
+                                checked={appState.penMode}
+                                onChange={() => onPenModeToggle(null)}
+                                title={t("toolBar.penMode")}
+                                penDetected={appState.penDetected}
+                                isTouchScreen={editorInterface.isTouchScreen}
+                                showLabel={true}
+                                buttonLabel="PM"
+                              />
+                            )}
+                            {!hideLockButton && (
+                              <LockButton
+                                checked={appState.activeTool.locked}
+                                onChange={onLockToggle}
+                                title={t("toolBar.lock")}
+                                showLabel={true}
+                                buttonLabel="Lock"
+                              />
+                            )}
 
                             <div className="App-toolbar__divider" />
 

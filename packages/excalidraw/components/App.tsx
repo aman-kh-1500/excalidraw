@@ -2175,6 +2175,8 @@ class App extends React.Component<AppProps, AppState> {
                             hideMainMenu={this.props.hideMainMenu}
                             hideLibrary={this.props.hideLibrary}
                             hideHelp={this.props.hideHelp}
+                            enablePenModeOnStylus={this.props.enablePenModeOnStylus}
+                            hideLockButton={this.props.hideLockButton}
                             app={this}
                             isCollaborating={this.props.isCollaborating}
                             generateLinkForSelection={
@@ -7670,12 +7672,24 @@ class App extends React.Component<AppProps, AppState> {
     }
     this.maybeOpenContextMenuAfterPointerDownOnTouchDevices(event);
 
-    //fires only once, if pen is detected, penMode is enabled
-    //the user can disable this by toggling the penMode button
-    if (!this.state.penDetected && event.pointerType === "pen") {
+    // Auto-enable pen mode when stylus is first detected, but only if the
+    // enablePenModeOnStylus prop is true (defaults to true for backwards compatibility)
+    if (
+      !this.state.penDetected &&
+      event.pointerType === "pen" &&
+      (this.props.enablePenModeOnStylus !== false)
+    ) {
       this.setState((prevState) => {
         return {
           penMode: true,
+          penDetected: true,
+        };
+      });
+    } else if (!this.state.penDetected && event.pointerType === "pen") {
+      // If enablePenModeOnStylus is false, still mark pen as detected
+      // so the PM button appears in the UI, but don't enable pen mode
+      this.setState((prevState) => {
+        return {
           penDetected: true,
         };
       });
@@ -8113,6 +8127,15 @@ class App extends React.Component<AppProps, AppState> {
   public handleCanvasPanUsingWheelOrSpaceDrag = (
     event: React.PointerEvent<HTMLElement> | MouseEvent,
   ): boolean => {
+    // When the freedraw (pen) tool is active, finger touches should pan the
+    // canvas rather than draw.  Only the stylus (pointerType "pen") should
+    // create strokes.  Mouse events never have a pointerType property, so the
+    // "pointerType" in event guard keeps TypeScript happy.
+    const isTouchInFreedrawMode =
+      "pointerType" in event &&
+      event.pointerType === "touch" &&
+      this.state.activeTool.type === "freedraw";
+
     if (
       !(
         gesture.pointers.size <= 1 &&
@@ -8120,7 +8143,8 @@ class App extends React.Component<AppProps, AppState> {
           (event.button === POINTER_BUTTON.MAIN && isHoldingSpace) ||
           isHandToolActive(this.state) ||
           (this.state.viewModeEnabled &&
-            this.state.activeTool.type !== "laser"))
+            this.state.activeTool.type !== "laser") ||
+          isTouchInFreedrawMode)
       )
     ) {
       return false;
@@ -8146,6 +8170,13 @@ class App extends React.Component<AppProps, AppState> {
         ? false
         : /Linux/.test(window.navigator.platform);
 
+    // Remember which pointer started this pan so we can ignore other pointers
+    // (e.g. the stylus that may still be hovering while a finger pans).
+    const panPointerId =
+      "pointerId" in event
+        ? (event as React.PointerEvent<HTMLElement>).pointerId
+        : undefined;
+
     setCursor(this.interactiveCanvas, CURSOR_TYPE.GRABBING);
     let { clientX: lastX, clientY: lastY } = event;
     
@@ -8155,7 +8186,12 @@ class App extends React.Component<AppProps, AppState> {
     let lastTimestamp = Date.now();
     
     const onPointerMove = withBatchedUpdatesThrottled((event: PointerEvent) => {
-      console.log('[EXCALIDRAW PAN] onPointerMove triggered');
+      // Only the pointer that started this pan drives the scroll.
+      // This prevents the stylus (a different pointerId) from interfering
+      // when a finger is panning in freedraw mode.
+      if (panPointerId !== undefined && event.pointerId !== panPointerId) {
+        return;
+      }
       const deltaX = lastX - event.clientX;
       const deltaY = lastY - event.clientY;
       const currentTimestamp = Date.now();
