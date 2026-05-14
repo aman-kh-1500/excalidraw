@@ -356,7 +356,7 @@ const LayerUI = ({
                           /> */}
                           {heading}
                           <Stack.Row gap={spacing.toolbarInnerRowGap}>
-                            {enablePenModeOnStylus !== false && (
+                            {/* {enablePenModeOnStylus !== false && ( */}
                               <PenModeButton
                                 zenModeEnabled={appState.zenModeEnabled}
                                 checked={appState.penMode}
@@ -367,7 +367,7 @@ const LayerUI = ({
                                 showLabel={true}
                                 buttonLabel="PM"
                               />
-                            )}
+                            {/* )} */}
                             {!hideLockButton && (
                               <LockButton
                                 checked={appState.activeTool.locked}
