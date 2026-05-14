@@ -6795,7 +6795,9 @@ class App extends React.Component<AppProps, AppState> {
       }
       
       const scaleFactor =
-        this.state.activeTool.type === "freedraw" && this.state.penMode
+        this.state.activeTool.type === "freedraw" &&
+        this.state.penMode &&
+        this.props.enablePenModeOnStylus !== false
           ? 1
           : distanceRatio;
 
