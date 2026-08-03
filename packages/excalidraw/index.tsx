@@ -96,6 +96,7 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
     pinchPanSensitivity,
     zoomStep,
     strokeWidthSlider,
+    defaultStrokeWidth,
     onDuplicate,
     children,
     validateEmbeddable,
@@ -230,6 +231,7 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
           pinchPanSensitivity={pinchPanSensitivity}
           zoomStep={zoomStep}
           strokeWidthSlider={strokeWidthSlider}
+          defaultStrokeWidth={defaultStrokeWidth}
           onDuplicate={onDuplicate}
           validateEmbeddable={validateEmbeddable}
           renderEmbeddable={renderEmbeddable}
