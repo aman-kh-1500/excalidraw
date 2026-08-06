@@ -794,8 +794,6 @@ class App extends React.Component<AppProps, AppState> {
       objectsSnapModeEnabled = false,
       theme = defaultAppState.theme,
       name = `${t("labels.untitled")}-${getDateTime()}`,
-      strokeWidthSlider = false,
-      defaultStrokeWidth = 0.75,
     } = props;
 
     this.state = {
@@ -811,9 +809,6 @@ class App extends React.Component<AppProps, AppState> {
       name,
       width: props.viewportSize?.width ?? props.canvasSize?.width ?? window.innerWidth,
       height: props.viewportSize?.height ?? props.canvasSize?.height ?? window.innerHeight,
-      currentItemStrokeWidth: strokeWidthSlider
-        ? defaultStrokeWidth
-        : defaultAppState.currentItemStrokeWidth,
     };
 
     this.refreshEditorInterface();

@@ -664,7 +664,6 @@ export interface ExcalidrawProps {
   pinchPanSensitivity?: number;
   zoomStep?: number;
   strokeWidthSlider?: boolean;
-  defaultStrokeWidth?: number;
   onUserFollow?: (payload: OnUserFollowedPayload) => void;
   canvasSize?: {
     width: number;

@@ -424,7 +424,7 @@ export const DEFAULT_ELEMENT_PROPS: {
   strokeColor: COLOR_PALETTE.black,
   backgroundColor: COLOR_PALETTE.transparent,
   fillStyle: "solid",
-  strokeWidth: 1.5,
+  strokeWidth: 0.75,
   strokeStyle: "solid",
   roughness: ROUGHNESS.artist,
   opacity: 100,
